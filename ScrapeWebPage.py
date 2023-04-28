@@ -10,55 +10,63 @@ import requests
 
 
 # Classes
-class itemBestBuy:
+class itemWebsite:
     def __init__(self, capacity, page_source):
         self.capacity = capacity
         self.page_source = page_source
         self.in_stock = False
-        self.price = ""
+        self.price = "."
+        self.website = ".."
 
     def check_if_item_in_stock(self,page_source):
-        is_available = False
         print(page_source)
         try:
             # page_source.find_element(By.XPATH, '//button[text()="Add to Cart"]')
             page_source.find_element(By.XPATH, '//button[normalize-space()="Add to Cart"]')
-            is_available = True
+            self.in_stock = True
         except Exception as e:
             print("Class is not available on the page")
             print("Item is for NOT sale currently")
             # print(e)
 
-        return is_available
+        return self.in_stock
 
     def get_price_of_item(self,page_source):
-        price = ""
+        # price = ""
         try:
-            what_I_found = page_source.find_element(By.XPATH, '//div[@class="priceView-hero-price priceView-customer-price"]')
-            price = (re.search('\$(\d+,?\d*\.\d+)', what_I_found.text)).group(1)
-
+            what_I_found = page_source.find_element(By.XPATH, '//div[@class="price"]')
+            self.price = (re.search('\$(\d+,?\d*\.\d+)', what_I_found.text)).group(1)
         except Exception as e:
             print("Class is not available on the page Price")
             # print(e)
 
-        return price
+        return self.price
 
-class itemBHPhoto:
-    def __init__(self, capacity, page_source):
-        self.capacity = capacity
-        self.page_source = page_source
-        self.in_stock = False
-        self.price = ""
+class itemBestBuy(itemWebsite):
+    def __init__(self, capacity, pagesource):
+        super().__init__(capacity,pagesource)
+        self.website = "Best Buy"
+    def get_price_of_item(self,page_source):
+        price = ""
+        try:
+            what_I_found = page_source.find_element(By.XPATH, '//div[@class="priceView-hero-price priceView-customer-price"]')
+            self.price = (re.search('\$(\d+,?\d*\.\d+)', what_I_found.text)).group(1)
+        except Exception as e:
+            print("Class is not available on the page Price")
+            # print(e)
+        return self.price
 
+class itemBHPhoto(itemWebsite):
+    def __init__(self, capacity, pagesource):
+        super().__init__(capacity,pagesource)
+        self.website = "B&H Photo"
     def check_if_item_in_stock(self,page_source):
-        is_available = False
         print(page_source)
         try:
             #BH Photo sometimes has Add to Cart buttons, but also has "Out of Stock" text on those pages, too.
             #Not truly in stock
-            print("trying add to cart button")
-            if page_source.find_element(By.XPATH, '//button[text()="Add to Cart"]'):
-                is_available = True
+            page_source.find_element(By.XPATH, '//button[normalize-space()="Add to Cart"]')
+            self.in_stock = True
         except Exception as e:
             print("Class is not available on the page")
             print("Item is for NOT sale currently")
@@ -66,58 +74,55 @@ class itemBHPhoto:
 
         #Even if Add to Cart is present, sometimes "Temporarily Out of Stock" comes up
         print("trying temp out of stock text")
-        if page_source.find_element(By.XPATH, '//span[contains(text(),"Temporarily Out of Stock")]'):
-            is_available = False
+        try:
+            page_source.find_element(By.XPATH, '//span[contains(text(),"Temporarily Out of Stock")]')
+            self.in_stock = False
             print("Item is for NOT sale currently")
+        except Exception as e:
+            print("there is NOT a Temporarily Out of Stock on the page, so it must be in stock")
 
-
-        return is_available
+        return self.in_stock
 
     def get_price_of_item(self,page_source):
-        price = ""
         try:
             what_I_found = page_source.find_element(By.XPATH, '//div[@class="price_L0iytPTSvv"]')
-            price = (re.search('\$(\d+,?\d*\.\d+)', what_I_found.text)).group(1)
-
+            self.price = (re.search('\$(\d+,?\d*\.\d+)', what_I_found.text)).group(1)
         except Exception as e:
             print("Class is not available on the page Price")
 #            print(e)
+        return self.price
 
-        return price
-
-class itemNewEgg:
-    def __init__(self, capacity, page_source):
-        self.capacity = capacity
-        self.page_source = page_source
-        self.in_stock = False
-        self.price = ""
-
+class itemNewEgg(itemWebsite):
+    def __init__(self, capacity, pagesource):
+        super().__init__(capacity,pagesource)
+        self.website = "NewEgg"
     def check_if_item_in_stock(self,page_source):
-        is_available = False
         print(page_source)
         try:
-            page_source.find_element(By.XPATH, '//button[text()="Add to Cart"]')
-            is_available = True
+            # page_source.find_element(By.XPATH, '//button[text()="Add to Cart"]')
+            page_source.find_element(By.XPATH, '//button[normalize-space()="Add to cart"]')
+            self.in_stock = True
         except Exception as e:
             print("Class is not available on the page")
             print("Item is for NOT sale currently")
             # print(e)
 
-        return is_available
-
+        return self.in_stock
     def get_price_of_item(self,page_source):
-        price = ""
         try:
-            what_I_found = page_source.find_element(By.XPATH, '//div[@class="priceView-hero-price priceView-customer-price"]')
-            price = (re.search('\$(\d+,?\d*\.\d+)', what_I_found.text)).group(1)
-
+            what_I_found = page_source.find_element(By.XPATH, '//div[@class="product-offer"]')
         except Exception as e:
             print("Class is not available on the page Price")
             # print(e)
 
-        return price
+        self.price = (re.search('\$(\d+,?\d*\.\d+)', what_I_found.text)).group(1)
+
+        return self.price
 
 class itemWalmart:
+    def __init__(self, capacity, pagesource):
+        super().__init__(capacity,pagesource)
+        self.website = "Walmart"
     def __init__(self, capacity, page_source):
         self.capacity = capacity
         self.page_source = page_source
@@ -125,7 +130,7 @@ class itemWalmart:
         self.price = ""
 
     def check_if_item_in_stock(self,page_source):
-        is_available = False
+
         print(page_source)
         try:
             # page_source.find_element(By.XPATH, '//button[text()="Add to cart"]')
@@ -134,25 +139,25 @@ class itemWalmart:
             #Note: It is recommended to use normalize-space() method because it trim the left and right side spaces. It is possible that there can be spaces present at the start or at the end of the target text.
 
             print("reached here")
-            is_available = True
+            self.in_stock = True
         except Exception as e:
             print("Class is not available on the page")
             print("Item is for NOT sale currently")
             # print(e)
 
-        return is_available
+        return self.in_stock
 
     def get_price_of_item(self,page_source):
-        price = ""
+
         try:
             what_I_found = page_source.find_element(By.XPATH, '//span[@itemprop="price"]')
-            price = (re.search('\$(\d+,?\d*\.\d+)', what_I_found.text)).group(1)
+            self.price = (re.search('\$(\d+,?\d*\.\d+)', what_I_found.text)).group(1)
 
         except Exception as e:
             print("Class is not available on the page Price")
             # print(e)
 
-        return price
+        return self.price
 
 
 def get_list_of_in_stock_items(newly_added_items):
@@ -332,8 +337,6 @@ def scrape_web_page_for_source_code(driver, url):
         print("walmart is in url")
         hard_drive = itemWalmart('18TB', driver)
 
-
-
     stock_check = hard_drive.check_if_item_in_stock(driver)
 
     print("stock_check")
@@ -429,7 +432,7 @@ def scrape_web_page_for_source_code(driver, url):
     # with open('/Users/bryan/Downloads/output.html', 'w', encoding='utf-8') as f:
     #     f.write(page_content)
 
-    return page_content_soup
+    return hard_drive, page_content_soup
 
 
 def open_the_driver():

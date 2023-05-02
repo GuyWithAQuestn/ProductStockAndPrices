@@ -1,6 +1,11 @@
 import ScrapeWebPage
 import ReadInParametersFile
+import ReadWriteDataToCSV
+
+
 import random
+import inspect #for looking at attributes of obect/ class
+
 
 
 #from bs4 import BeautifulSoup
@@ -16,37 +21,131 @@ url = 'https://www.bestbuy.com/site/wd-easystore-18tb-external-usb-3-0-hard-driv
 #url = 'https://www.bestbuy.com/site/nvidia-geforce-rtx-3060-ti-8gb-gddr6-pci-express-4-0-graphics-card-steel-and-black/6439402.p?skuId=6439402'
 #url = 'https://www.walmart.com/ip/Western-Digital-0F38459SP-3-5-in-Ultra-Star-18TB-26-1-mm-512MB-7200RPM-DC-HC550-Internal-Hard-Drive/794882883?from=searchResults'
 
+# # ****
+# #for sorting lists of hard drives
+# def getKeyPrice(obj):
+#     return obj.price
+#
+# def getKeyWebsite(obj):
+#     return obj.website
+#
+# def getKeyCapacity(obj):
+#     return int(obj.capacity)
+# # ****
+
 list_of_urls = ReadInParametersFile.open_and_read_file()
 
 #let's randomize the urls order so it maybe seems less of a bot
 random.shuffle(list_of_urls)
 
-# print("list_of_urls")
-# print(list_of_urls)
-
+#Open the driver for webscraping
 driver = ScrapeWebPage.open_the_driver()
 
 list_of_hard_drive_items = []
 
-iteration = 1
+# For each of the urls read in, get the hard drive's details and put it in a HDD object instance.
+# iteration = 1
 for each_url in list_of_urls:
-    print("This is item number: " + str(iteration))
-    iteration += 1
+    # print("This is item number: " + str(iteration))
+    # iteration += 1
     hard_drive_item, page_content_soup = ScrapeWebPage.scrape_web_page_for_source_code(driver, each_url)
     list_of_hard_drive_items.append(hard_drive_item)
 
-print("list_of_hard_drive_items")
-print(list_of_hard_drive_items)
-
-for each_instance in list_of_hard_drive_items:
-    print(each_instance.website)
-    print(each_instance.capacity)
-    print(each_instance.price)
-    print(each_instance.in_stock)
-
-    # print("page_content_soup")
-    # print(page_content_soup)
+# print("list_of_hard_drive_items")
+# print(list_of_hard_drive_items)
 
 
-# print("page_content_soup")
-# print(page_content_soup)
+# this should be one long list initially sorted by website name and then by capacity
+list_of_HDDs_sorted_by_Website_then_Capacity = ReadWriteDataToCSV.sortListOfDevicesForOutput(list_of_hard_drive_items)
+print("list_of_HDDs_sorted_by_Website_then_Capacity")
+print(list_of_HDDs_sorted_by_Website_then_Capacity)
+
+list_of_prices = ReadWriteDataToCSV.list_of_prices_sorted_by_website_then_capacity(list_of_HDDs_sorted_by_Website_then_Capacity)
+
+ReadWriteDataToCSV.read_in_and_write_out_csv_file(list_of_prices)
+
+    # for each in each_item:
+    #     print(each.website)
+    #     print(each.cap)
+    # print(each_item.website + ":" + each_item.capacity)
+
+
+# for each_instance in list_of_hard_drive_items:
+#     print(each_instance.website)
+#     print(each_instance.capacity)
+#     print(each_instance.price)
+#     print(each_instance.in_stock)
+
+# # method 1
+# list_of_hard_drive_items.sort(key=getKeyPrice)
+# print("Sort by Price")
+# print(list_of_hard_drive_items)
+#
+# for each_instance in list_of_hard_drive_items:
+#     print(each_instance.website)
+#     print(each_instance.price)
+
+# # method 1
+# list_of_hard_drive_items.sort(key=getKeyWebsite)
+# print("Sort by Website")
+# print(list_of_hard_drive_items)
+#
+# for each_instance in list_of_hard_drive_items:
+#     print(each_instance.website)
+#     print(each_instance.price)
+#
+#     # print("page_content_soup")
+#     # print(page_content_soup)
+
+
+# # ****
+#
+#
+# # since each of the URLs were accessed randomly (to help decrease chances of being detected as a bot)
+# # Going to group each of the hard drives by their website name
+# # create a unique list of website names
+# unique_list_of_websites = []
+#
+# for each_instance in list_of_hard_drive_items:
+#      # print(each_instance.website)
+#      # print(each_instance.price)
+#      if each_instance.website not in unique_list_of_websites:
+#          unique_list_of_websites.append(each_instance.website)
+#
+# print("unique_list_of_websites")
+# print(unique_list_of_websites)
+#
+#
+# # For each website name, create a list within a list
+# #[website nameA [list of drives prices], website nameB [list of drives prices], etc]
+#
+# master_list_of_prices_based_on_website = []
+#
+# for each_website in unique_list_of_websites:
+#     master_list_of_prices = []
+#
+#     for each_instance in list_of_hard_drive_items:
+#         if each_website == each_instance.website:
+#             master_list_of_prices.append(each_instance.price)
+#
+#     master_list_of_prices_based_on_website.append(master_list_of_prices)
+#
+#
+# list_iteration = 1
+# for each_websites_prices in master_list_of_prices_based_on_website:
+#     print("list_iteration")
+#     print(list_iteration)
+#     list_iteration = list_iteration + 1
+#     print(each_websites_prices)
+#
+#
+# # Sort hard drives by capacity (highest capacity to least capacity)
+# list_of_hard_drive_items.sort(key=getKeyCapacity,reverse=True)
+# print("Sort by Capacity")
+# print(list_of_hard_drive_items)
+#
+# for each_instance in list_of_hard_drive_items:
+#     print(each_instance.capacity)
+#     print(each_instance.price)
+#
+# # *****

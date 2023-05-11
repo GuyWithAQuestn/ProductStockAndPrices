@@ -137,17 +137,37 @@ def read_in_and_write_out_csv_file(list_of_prices):
 def list_of_prices_sorted_by_website_then_capacity(list_of_HDDs_sorted_by_Website_then_Capacity):
 
     big_list_of_hdds_prices = []
+    big_list_of_hdds_prices_with_website = []
+
 
     for each_item in list_of_HDDs_sorted_by_Website_then_Capacity:
         for each in each_item:
             # print(each.website)
             # print(each.capacity)
             big_list_of_hdds_prices.append(each.price)
+            big_list_of_hdds_prices_with_website.append(each.website)
+            big_list_of_hdds_prices_with_website.append(each.price)
+
+
+
+    print("big_list_of_hdds_prices_with_website")
+    print(big_list_of_hdds_prices_with_website)
 
     print("big_list_of_hdds_prices")
     print(big_list_of_hdds_prices)
 
     return big_list_of_hdds_prices
+
+def sort_unique_websites_alphabetically(unique_list_of_websites):
+
+    #unique_list_of_websites_sorted_alphabetically = unique_list_of_websites.sort(key=getKeyWebsite,reverse=False)
+    unique_list_of_websites_sorted_alphabetically = sorted(unique_list_of_websites, reverse=False)
+    print("unique_list_of_websites")
+    print(unique_list_of_websites)
+    print("unique_list_of_websites_sorted_alphabetically")
+    print(unique_list_of_websites_sorted_alphabetically)
+
+    return unique_list_of_websites_sorted_alphabetically
 
 def sort_hdds_by_capacity(list_of_hard_drive_items):
     # Sort hard drives by capacity (highest capacity to least capacity)
@@ -206,6 +226,11 @@ def sortListOfDevicesForOutput(list_of_hard_drive_items):
     # create a unique list of website names
     unique_list_of_websites = get_unique_website_names(list_of_hard_drive_items)
 
+    print("unique_list_of_websites")
+    print(unique_list_of_websites)
+
+    unique_list_of_websites_sorted_alphabetically = sort_unique_websites_alphabetically(unique_list_of_websites)
+
     # For each website name, create a list within a list
     #[website nameA [list of drives prices], website nameB [list of drives prices], etc]
 
@@ -215,7 +240,7 @@ def sortListOfDevicesForOutput(list_of_hard_drive_items):
     hdds_sorted_by_capacity = sort_hdds_by_capacity(list_of_hard_drive_items)
 
     #then break them up by the website they belong to
-    list_of_lists_of_hdds = group_hdds_by_website(unique_list_of_websites, hdds_sorted_by_capacity)
+    list_of_lists_of_hdds = group_hdds_by_website(unique_list_of_websites_sorted_alphabetically, hdds_sorted_by_capacity)
 
     print("list_of_lists_of_hdds")
     print(list_of_lists_of_hdds)

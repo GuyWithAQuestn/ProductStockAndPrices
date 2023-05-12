@@ -9,6 +9,8 @@ import inspect #for looking at attributes of obect/ class
 
 
 
+
+
 #from bs4 import BeautifulSoup
 
 # url = 'https://www.bestbuy.com/site/wd-easystore-22tb-external-usb-3-0-hard-drive-black/6537414.p?skuId=6537414#anchor=productVariations'

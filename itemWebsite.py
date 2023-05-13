@@ -9,12 +9,15 @@ class itemWebsite:
     #     self.expected_capacity = expected_capacity
     def __init__(self, driver):
         # self.expected_capacity = expected_capacity
+        self.current_url = driver.current_url #also want to store the URL to the current product
         self.capacity = '.'
         self.page_source = driver
         self.in_stock = False
         self.price = ".."
         self.website = "..."
         self.successfully_found_element = True
+        self.item_description = "...."
+        self.model_number = "....."
 
     def check_for_if_page_is_redirected(self, driver):
         #pages like BHPhoto will refer to another product when something isn't in stock.
@@ -55,6 +58,8 @@ class itemWebsite:
         price = ""
         try:
             what_I_found = driver.find_element(By.XPATH, '//h1[@class="heading-5 v-fw-regular"]')
+            self.item_description = what_I_found.text
+            self.model_number = "....."
             self.capacity = (re.search(r'\d+TB', what_I_found.text)).group()
         except Exception as e:
             print("Class is not available on the page Price")
@@ -107,6 +112,7 @@ class itemBestBuy(itemWebsite):
         try:
             # driver.find_element(By.XPATH, '//button[normalize-space()="Add to Cart"]')
             title_of_product = driver.find_element(By.XPATH, '//div[@class="sku-title"]')
+            model_number = driver.find_element(By.XPATH, '//div[@class="model product-data"]')
 
         except Exception as e:
             print("Cannot find title of product")
@@ -115,9 +121,23 @@ class itemBestBuy(itemWebsite):
             self.capacity = self.expected_capacity
             # print(e)
 
+        pattern = r'(?<=:)[A-Z0-9-]+(?=\b)'  # Regular expression pattern to match the desired string
+        model_number_group = re.search(pattern, model_number.text)  # Search for the pattern in the sentence
+        print("model_number.text")
+        print(model_number.text)
+        print("model_number_group")
+        print(model_number_group)
+        self.model_number = model_number_group.group()
+        print("self.model_number")
+        print(self.model_number)
+
         capacity = (re.search(r'\d+TB', title_of_product.text)).group() #12TB
         # strip out the TB from the 12TB so that it's just a string of an integer
         self.capacity = (re.search(r'\d+', capacity)).group() #12
+
+        # pattern = r'\b[A-Z0-9-]{14,}\b'  # Regular expression pattern to match the desired string
+        # self.model_number = re.search(pattern, title_of_product.text)  # Search for the pattern in the sentence
+        self.item_description = title_of_product.text
 
         return self.capacity
 
@@ -190,20 +210,25 @@ class itemAmazon(itemWebsite):
         price = ""
         try:
             # driver.find_element(By.XPATH, '//button[normalize-space()="Add to Cart"]')
-            what_I_found = driver.find_element(By.XPATH, '//span[@id="productTitle"]')
+            title_of_product = driver.find_element(By.XPATH, '//span[@id="productTitle"]')
             # product_title = soup.find('div', {'class': 'shop-product-title'})
 #            self.capacity = (re.search('\$(\d+,?\d*\.\d+)', what_I_found.text)).group(1)
             #            self.capacity = (re.search('([0-9]+TB$)\w+', what_I_found.text)).group(1)
             # self.capacity = (re.search(r'\d+(?=TB)', what_I_found.text)).group(1)
             # self.capacity = re.findall('([0-9]+)\w+', self.capacity)
-            self.capacity = (re.search(r'\d+TB', what_I_found.text)).group()
+            self.capacity = (re.search(r'\d+TB', title_of_product.text)).group()
             # strip out the TB from the 12TB so that it's just a string of an integer
-            self.capacity = (re.search(r'\d+', what_I_found.text)).group()
+            self.capacity = (re.search(r'\d+', title_of_product.text)).group()
         except Exception as e:
             print("Class is not available on the page Price")
             self.successfully_found_element = False
             self.capacity = "0TB"
             # print(e)
+
+        pattern = r'\b[A-Z0-9-]{14,}\b'  # Regular expression pattern to match the desired string
+        model_number_group = re.search(pattern, title_of_product.text)  # Search for the pattern in the sentence
+        self.model_number = model_number_group.group()
+        self.item_description = title_of_product.text
 
         return self.capacity
 
@@ -445,8 +470,8 @@ class itemNewEgg(itemWebsite):
     def get_capactity_of_item(self, driver):
         price = ""
         try:
-            what_I_found = driver.find_element(By.XPATH, '//h1[@class="product-title"]')
-            self.capacity = (re.search(r'\d+TB', what_I_found.text)).group()
+            title_of_product = driver.find_element(By.XPATH, '//h1[@class="product-title"]')
+            self.capacity = (re.search(r'\d+TB', title_of_product.text)).group()
         except Exception as e:
             print("Class is not available on the page Price")
             self.successfully_found_element = False
@@ -454,7 +479,17 @@ class itemNewEgg(itemWebsite):
             # print(e)
 
         # strip out the TB from the 12TB so that it's just a string of an integer
-        self.capacity = (re.search(r'\d+', what_I_found.text)).group()
+        self.capacity = (re.search(r'\d+', title_of_product.text)).group()
+
+
+        capacity = (re.search(r'\d+TB', title_of_product.text)).group() #12TB
+        # strip out the TB from the 12TB so that it's just a string of an integer
+        self.capacity = (re.search(r'\d+', capacity)).group() #12
+
+        pattern = r'\b[A-Z0-9-]{14,}\b'  # Regular expression pattern to match the desired string
+        model_number_group = re.search(pattern, title_of_product.text)  # Search for the pattern in the sentence
+        self.model_number = model_number_group.group()
+        self.item_description = title_of_product.text
 
         return self.capacity
 

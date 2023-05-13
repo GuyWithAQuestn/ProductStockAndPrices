@@ -14,7 +14,6 @@ from selenium.common.exceptions import TimeoutException #for urls timing out
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
-
 # import undetected_chromedriver as uc
 # driver = uc.Chrome()
 # driver.get('https://www.example.com')

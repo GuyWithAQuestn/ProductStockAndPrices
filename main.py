@@ -1,11 +1,14 @@
 import ScrapeWebPage
 import ReadInParametersFile
 import ReadWriteDataToCSV
+import ReadWriteDataToDB
 
 import time
 import random
 from random import randint
 import inspect #for looking at attributes of obect/ class
+
+from datetime import datetime #getting today's date
 
 
 
@@ -82,6 +85,30 @@ print(list_of_HDDs_sorted_by_Website_then_Capacity)
 list_of_prices = ReadWriteDataToCSV.list_of_prices_sorted_by_website_then_capacity(list_of_HDDs_sorted_by_Website_then_Capacity)
 
 ReadWriteDataToCSV.read_in_and_write_out_csv_file(list_of_prices)
+
+todays_date = datetime.today().strftime('%Y-%m-%d')
+print("each_hdd instance:")
+i=1
+for each_hdd in list_of_hard_drive_items:
+    print("item: " + str(i))
+    i=i+1
+    ReadWriteDataToDB.insert_into_HDD_database(todays_date,each_hdd)
+
+# what do I have in terms of objects/ instances that I've scraped
+print("each_hdd instance:")
+i=1
+for each_hdd in list_of_hard_drive_items:
+    print("item: " + str(i))
+    i=i+1
+    print(each_hdd.website)
+    print(each_hdd.capacity)
+    print(each_hdd.price)
+    print(each_hdd.in_stock)
+    print(each_hdd.model_number)
+    print(each_hdd.item_description)
+    print(datetime.today().strftime('%Y-%m-%d'))
+    print(each_hdd.current_url)
+
 
     # for each in each_item:
     #     print(each.website)

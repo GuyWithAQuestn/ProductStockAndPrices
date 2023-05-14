@@ -21,8 +21,8 @@ def read_in_and_write_out_csv_file(list_of_prices):
     x = 0
     comment = ""
 
-    originalCSVFile = r'/Users/bryan/Downloads/wd.csv'
-    #originalCSVFile = r'wd.csv'
+    #originalCSVFile = r'/Users/bryan/Downloads/wd.csv'
+    originalCSVFile = r'wd.csv'
     # Write the contents of HDDList to a temporary .CSV file
     tempCSVFile = r'TEMP.csv'
     # tempCSVFile = "TEMP.csv"

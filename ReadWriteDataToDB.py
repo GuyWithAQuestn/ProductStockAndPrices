@@ -8,7 +8,7 @@ from ScrapeWebPage import itemWalmart
 
 def create_hdd_database():
 
-    conn = sqlite3.connect('products2.db.sqlite3')
+    conn = sqlite3.connect('products.db.sqlite3')
     c = conn.cursor()
 
     sql_command_create_table = """CREATE TABLE IF NOT EXISTS harddrives (
@@ -68,7 +68,7 @@ def create_hdd_database():
 # conn.close()
 
 def insert_into_HDD_database(date, itemWebsite):
-    conn = sqlite3.connect('products2.db.sqlite3')
+    conn = sqlite3.connect('products.db.sqlite3')
 
     c = conn.cursor()
 

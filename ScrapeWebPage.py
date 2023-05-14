@@ -876,12 +876,19 @@ def open_the_driver():
 #    options.add_argument('--proxy-server={}'.format(proxy))  # Comment in/out for use of proxy
     #    options.add_argument('user-agent={}'.format(headers['User-Agent']))  # Comment in/ out for change of headers
     # options.add_argument('user-agent={}'.format(headers))
-
     # options.add_argument('--proxy-server=proxy')
     # driver = uc.Chrome(options=options)
 
 
+# Using regular chrome driver
+
+    options.add_argument("--no-sandbox")
+    # options.add_argument("--headless")
+    options.add_argument("--disable-gpu")
+
     driver = webdriver.Chrome(options=options)
+
+# Using undetected_chromedriver
 #    driver = uc.Chrome(options=options)
 
     return driver

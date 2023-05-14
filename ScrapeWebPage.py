@@ -883,7 +883,7 @@ def open_the_driver():
 # Using regular chrome driver
 
     options.add_argument("--no-sandbox")
-    # options.add_argument("--headless")
+    options.add_argument("--headless") #do it without opening a web browser
     options.add_argument("--disable-gpu")
 
     driver = webdriver.Chrome(options=options)

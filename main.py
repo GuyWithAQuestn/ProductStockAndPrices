@@ -1,7 +1,10 @@
+#!/usr/bin/python3
+
 import ScrapeWebPage
 import ReadInParametersFile
 import ReadWriteDataToCSV
 import ReadWriteDataToDB
+import DetectPlatform
 
 import time
 import random
@@ -9,6 +12,12 @@ from random import randint
 import inspect #for looking at attributes of obect/ class
 
 from datetime import datetime #getting today's date
+
+#Detect if we're running on a Pi or something else
+if (DetectPlatform.is_raspberrypi()):
+    print("returned True. This is a Pi")
+else:
+    print("retruned False. This is not a Pi.")
 
 # Get a list of all the items to search for (by url)
 list_of_urls = ReadInParametersFile.open_and_read_file()

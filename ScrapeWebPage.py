@@ -729,23 +729,23 @@ def scrape_web_page_for_source_code(driver, url):
 
 # ***********
 
-    print("url")
-    print(url)
+    print("processing: " + url)
+
     if "bestbuy" in url:
-        print("bestbuy is in url")
+        # print("bestbuy is in url")
 #        hard_drive = itemBestBuy(driver, expected_capacity)
         hard_drive = itemBestBuy(driver)
     elif "bhphotovideo" in url:
-        print("bhphotovideo is in url")
+        # print("bhphotovideo is in url")
         hard_drive = itemBHPhoto(driver)
     elif "newegg" in url:
-        print("newegg is in url")
+        # print("newegg is in url")
         hard_drive = itemNewEgg(driver)
     elif "walmart" in url:
-        print("walmart is in url")
+        # print("walmart is in url")
         hard_drive = itemWalmart(driver)
     elif "amazon" in url:
-        print("amazon is in url")
+        # print("amazon is in url")
         hard_drive = itemAmazon(driver)
 
 
@@ -754,19 +754,26 @@ def scrape_web_page_for_source_code(driver, url):
     # #first, check that there is no captcha on the page!!!
     hard_drive.check_for_captcha(driver)
 
-    stock_check = hard_drive.check_if_item_in_stock(driver)
+    # stock_check = hard_drive.check_if_item_in_stock(driver)
+    #
+    # print("stock_check")
+    # print(stock_check)
+    #
+    # item_price = hard_drive.get_price_of_item(driver)
+    # print("item_price")
+    # print(item_price)
+    #
+    #
+    # item_capacity = hard_drive.get_capactity_of_item(driver)
+    # print("item_capacity")
+    # print(item_capacity)
 
-    print("stock_check")
-    print(stock_check)
-
-    item_price = hard_drive.get_price_of_item(driver)
-    print("item_price")
-    print(item_price)
 
 
-    item_capacity = hard_drive.get_capactity_of_item(driver)
-    print("item_capacity")
-    print(item_capacity)
+    #All in one method; will get an instance of the element with:
+    # website_store, model_number, item_description, capacity, price, in_stock, url
+    # don't really need to return anything since it'll be the properties of that instance
+    hard_drive.get_item_properties(driver)
 
 #     try:
 #         what_I_found = driver.find_element(By.XPATH, '//button[text()="Add to Cart"]')

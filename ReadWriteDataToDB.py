@@ -6,11 +6,28 @@ from ScrapeWebPage import itemBHPhoto
 from ScrapeWebPage import itemNewEgg
 from ScrapeWebPage import itemWalmart
 
+def create_hdd_database():
 
+    conn = sqlite3.connect('products2.db.sqlite3')
+    c = conn.cursor()
 
-conn = sqlite3.connect('products2.db.sqlite3')
+    sql_command_create_table = """CREATE TABLE IF NOT EXISTS harddrives (
+        date TEXT,
+        model_number TEXT,
+        item_description TEXT,
+        capacity TEXT,
+        price TEXT,
+        in_stock TEXT,
+        website_store TEXT,
+        url TEXT,
+        PRIMARY KEY(date, model_number, website_store))"""
 
-c = conn.cursor()
+    c.execute(sql_command_create_table)
+    conn.commit()
+    conn.close()
+
+    return 0
+
 
 
 # TO GET RID OF TABLE
@@ -41,15 +58,14 @@ c = conn.cursor()
 
 # conn.commit()
 
-c.execute("""SELECT * FROM harddrives""")
-
-# c.fetchone()
-# c.fetchmany(5)
-print(c.fetchall())
-
-conn.commit()
-conn.close()
-
+# c.execute("""SELECT * FROM harddrives""")
+#
+# # c.fetchone()
+# # c.fetchmany(5)
+# print(c.fetchall())
+#
+# conn.commit()
+# conn.close()
 
 def insert_into_HDD_database(date, itemWebsite):
     conn = sqlite3.connect('products2.db.sqlite3')
@@ -74,31 +90,6 @@ def insert_into_HDD_database(date, itemWebsite):
             VALUES(?,?,?,?,?,?,?,?)"""
 
     c.execute(sql_commend,items_to_insert)
-
-    # c.execute("""INSERT INTO harddrives VALUES (
-    # date,
-    # itemWebsite.model_number,
-    # itemWebsite.item_description,
-    # itemWebsite.capacity,
-    # itemWebsite.price,
-    # itemWebsite.in_stock,
-    # itemWebsite.website,
-    # itemWebsite.current_url
-    # )""")
-    #
-    # sql = ''' INSERT INTO tasks(name,priority,status_id,project_id,begin_date,end_date)
-    #              VALUES(?,?,?,?,?,?) '''
-
-
-    # print("What would be inserted into db")
-    # print(date)
-    # print(itemWebsite.model_number)
-    # print(itemWebsite.item_description)
-    # print(itemWebsite.capacity)
-    # print(itemWebsite.price)
-    # print(itemWebsite.in_stock)
-    # print(itemWebsite.website)
-    # print(itemWebsite.current_url)
 
     conn.commit()
     conn.close()

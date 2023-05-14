@@ -28,49 +28,59 @@ class itemWebsite:
     def check_for_captcha(self,driver):
         pass
         return 0
-    def check_if_item_in_stock(self,driver):
-        print(driver)
+
+    def get_item_properties(self, driver):
+
+        # Check to see if the item is in stock
         try:
-            driver.find_element(By.XPATH, '//button[text()="Add to Cart"]')
-            #driver.find_element(By.XPATH, '//button[normalize-space()="Add to Cart"]')
+            # We'll give it 10 seconds to appear before looking further.
+            # Only doing on the first element as I assume the remaining elements will have loaded by the time this one has
+            WebDriverWait(driver, 10).until(
+                EC.presence_of_element_located((By.XPATH, '//button[normalize-space()="Add to Cart"]')))
+            driver.find_element(By.XPATH, '//button[normalize-space()="Add to Cart"]')
             self.in_stock = True
         except Exception as e:
-            print("Class is not available on the page; no Add to Cart button")
-            print("Item is for NOT sale currently")
+            print("No Add button. Item is for NOT sale currently")
+            self.in_stock = False
             # print(e)
-            self.successfully_found_element = False
 
-        return self.in_stock
-
-    def get_price_of_item(self,driver):
-        # price = ""
+        # Next, get the price of the item
         try:
-            what_I_found = driver.find_element(By.XPATH, '//div[@class="price"]')
-            self.price = (re.search('\$(\d+,?\d*\.\d+)', what_I_found.text)).group(1)
+            price_sentence = driver.find_element(By.XPATH, '//div[@class="priceView-hero-price priceView-customer-price"]')
+            self.price = (re.search('\$(\d+,?\d*\.\d+)', price_sentence.text)).group(1)
         except Exception as e:
-            print("Class is not available on the page Price")
             # print(e)
-            self.successfully_found_element = False
+            print("Class is not available on the page Price")
+            self.price = "0.00"
 
-        return self.price
-
-    def get_capactity_of_item(self, driver):
-        price = ""
+        # What is the model number of the drive?
         try:
-            what_I_found = driver.find_element(By.XPATH, '//h1[@class="heading-5 v-fw-regular"]')
-            self.item_description = what_I_found.text
-            self.model_number = "....."
-            self.capacity = (re.search(r'\d+TB', what_I_found.text)).group()
+            model_number = driver.find_element(By.XPATH, '//div[@class="model product-data"]')
+            pattern = r'(?<=:)[A-Z0-9-]+(?=\b)'  # Regular expression pattern to match the desired string
+            model_number_group = re.search(pattern, model_number.text)  # Search for the pattern in the sentence
+            self.model_number = model_number_group.group()
         except Exception as e:
-            print("Class is not available on the page Price")
-            self.successfully_found_element = False
-            self.capacity = self.expected_capacity
+            print("Cannot find model number of product")
+            self.model_number = "Unknown Model"
+
+
+        # What is the Description/ Capacity of the drive?
+        try:
+            title_of_product = driver.find_element(By.XPATH, '//div[@class="sku-title"]')
+            self.item_description = title_of_product.text
+
+            # From the title of the product, get the capacity
+            capacity = (re.search(r'\d+TB', title_of_product.text)).group()  # 12TB
+            # strip out the TB from the 12TB so that it's just a string of an integer
+            self.capacity = (re.search(r'\d+', capacity)).group()  # 12
+
+        except Exception as e:
+            print("Cannot find title of product")
+            self.item_description = "Unknown Description"
+            self.capacity = "0"
             # print(e)
 
-        # strip out the TB from the 12TB so that it's just a string of an integer
-        self.capacity = (re.search(r'\d+', what_I_found.text)).group()
-
-        return self.capacity
+        return 0
 
 class itemBestBuy(itemWebsite):
     # def __init__(self, driver,expected_capacity):
@@ -79,159 +89,134 @@ class itemBestBuy(itemWebsite):
         super().__init__(driver)
         self.website = "Best Buy"
         # self.expected_capacity = expected_capacity
-    def check_if_item_in_stock(self,driver):
-        print(driver)
-        try:
-#            WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.ID, "waitCreate")))
-            #driver.find_element(By.XPATH, '//button[@class="c-button c-button-primary c-button-lg c-button-block c-button-icon c-button-icon-leading add-to-cart-button"')
 
-            print("Checking for add button")
+    def get_item_properties(self, driver):
+
+        # Check to see if the item is in stock
+        try:
             # We'll give it 10 seconds to appear before looking further.
-            WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.XPATH, '//button[normalize-space()="Add to Cart"]')))
+            # Only doing on the first element as I assume the remaining elements will have loaded by the time this one has
+            WebDriverWait(driver, 10).until(
+                EC.presence_of_element_located((By.XPATH, '//button[normalize-space()="Add to Cart"]')))
             driver.find_element(By.XPATH, '//button[normalize-space()="Add to Cart"]')
             self.in_stock = True
         except Exception as e:
-            print("Class is not available on the page; no Add to Cart button")
-            print("Item is for NOT sale currently")
-            self.successfully_found_element = False
+            print("No Add button. Item is for NOT sale currently")
+            self.in_stock = False
             # print(e)
 
-        return self.in_stock
-    def get_price_of_item(self,driver):
-        price = ""
+        # Next, get the price of the item
         try:
-            what_I_found = driver.find_element(By.XPATH, '//div[@class="priceView-hero-price priceView-customer-price"]')
-            self.price = (re.search('\$(\d+,?\d*\.\d+)', what_I_found.text)).group(1)
+            price_sentence = driver.find_element(By.XPATH, '//div[@class="priceView-hero-price priceView-customer-price"]')
+            self.price = (re.search('\$(\d+,?\d*\.\d+)', price_sentence.text)).group(1)
         except Exception as e:
-            print("Class is not available on the page Price")
-            self.successfully_found_element = False
             # print(e)
-        return self.price
-    def get_capactity_of_item(self,driver):
-        price = ""
+            print("Class is not available on the page Price")
+            self.price = "0.00"
+
+        # What is the model number of the drive?
         try:
-            # driver.find_element(By.XPATH, '//button[normalize-space()="Add to Cart"]')
-            title_of_product = driver.find_element(By.XPATH, '//div[@class="sku-title"]')
             model_number = driver.find_element(By.XPATH, '//div[@class="model product-data"]')
+            pattern = r'(?<=:)[A-Z0-9-]+(?=\b)'  # Regular expression pattern to match the desired string
+            model_number_group = re.search(pattern, model_number.text)  # Search for the pattern in the sentence
+            self.model_number = model_number_group.group()
+        except Exception as e:
+            print("Cannot find model number of product")
+            self.model_number = "Unknown Model"
+
+
+        # What is the Description/ Capacity of the drive?
+        try:
+            title_of_product = driver.find_element(By.XPATH, '//div[@class="sku-title"]')
+            self.item_description = title_of_product.text
+
+            # From the title of the product, get the capacity
+            capacity = (re.search(r'\d+TB', title_of_product.text)).group()  # 12TB
+            # strip out the TB from the 12TB so that it's just a string of an integer
+            self.capacity = (re.search(r'\d+', capacity)).group()  # 12
 
         except Exception as e:
             print("Cannot find title of product")
-            title_of_product = "0TB"
-            self.successfully_found_element = False
-            self.capacity = self.expected_capacity
+            self.item_description = "Unknown Description"
+            self.capacity = "0"
             # print(e)
 
-        pattern = r'(?<=:)[A-Z0-9-]+(?=\b)'  # Regular expression pattern to match the desired string
-        model_number_group = re.search(pattern, model_number.text)  # Search for the pattern in the sentence
-        print("model_number.text")
-        print(model_number.text)
-        print("model_number_group")
-        print(model_number_group)
-        self.model_number = model_number_group.group()
-        print("self.model_number")
-        print(self.model_number)
-
-        capacity = (re.search(r'\d+TB', title_of_product.text)).group() #12TB
-        # strip out the TB from the 12TB so that it's just a string of an integer
-        self.capacity = (re.search(r'\d+', capacity)).group() #12
-
-        # pattern = r'\b[A-Z0-9-]{14,}\b'  # Regular expression pattern to match the desired string
-        # self.model_number = re.search(pattern, title_of_product.text)  # Search for the pattern in the sentence
-        self.item_description = title_of_product.text
-
-        return self.capacity
+        return 0
 
 class itemAmazon(itemWebsite):
     def __init__(self, driver):
         super().__init__(driver)
         self.website = "Amazon"
-    def check_if_item_in_stock(self,driver):
-        print(driver)
+
+
+    def get_item_properties(self, driver):
+
+        # Check to see if the item is in stock
         try:
-            #driver.find_element(By.XPATH, '//button[@class="c-button c-button-primary c-button-lg c-button-block c-button-icon c-button-icon-leading add-to-cart-button"')
             # We'll give it 10 seconds to appear before looking further.
-            WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.XPATH, '//input[@id="add-to-cart-button"]')))
+            # Only doing on the first element as I assume the remaining elements will have loaded by the time this one has
+            WebDriverWait(driver, 10).until(
+                EC.presence_of_element_located((By.XPATH, '//input[@id="add-to-cart-button"]')))
             driver.find_element(By.XPATH, '//input[@id="add-to-cart-button"]')
             self.in_stock = True
         except Exception as e:
-            print("Class is not available on the page; no Add to Cart button")
-            print("Item is for NOT sale currently")
-            self.successfully_found_element = False
+            print("No Add button. Item is for NOT sale currently")
+            self.in_stock = False
             # print(e)
 
-        return self.in_stock
-    def get_price_of_item(self,driver):
-        price = ""
-
+        # Next, get the price of the item
+        # For Amazon, the price can be in a few different spots, so  allowing it to check with multiple Try: statements
         try:
             what_I_found = driver.find_element(By.XPATH, '//span[@class="a-price aok-align-center reinventPricePriceToPayMargin priceToPay"]')
-            print("first price")
             whole_number, decimal_number = what_I_found.text.split('\n')
-            print(whole_number)
-            print(decimal_number)
-            price = whole_number + "." + decimal_number
-            print("price")
-            print(price)
-            # $538.86 (an example output)
+            price = whole_number + "." + decimal_number # $538.86 (an example output)
 
         except Exception as e:
             try:
                 what_I_found = driver.find_element(By.XPATH,'//span[@id="sns-base-price"]')
-                print("second price")
-                print(what_I_found.text)
                 pattern = r'\$\d+\.\d+'  # Regular expression pattern to match the dollar amount
                 dollar_search = re.search(pattern, what_I_found.text)  # Search for the pattern in the sentence
-                print("dollar_search")
-                print(dollar_search)
-                # if dollar_search:
-                    # print("1")
                 price = dollar_search.group()  # Get the matched portion
-                    # print("2")
-                    # print("dollar_amount_only")
-                print(price)  # Output: $28.48
-                    # print("3")
-                # else:
-                #     print("No dollar amount found.")
             except Exception as e:
                 print("price is not available on the page Price")
                 price = "$0.00" #Set a default price
-                self.successfully_found_element = False
                 # print(e)
-
-        # self.price = (re.search('\$(\d+,?\d*\.\d+)', what_I_found.text)).group(1)
         self.price = (re.search('\$(\d+,?\d*\.\d+)', price)).group(1)
 
+
+        # # What is the model number of the drive?
+        # try:
+        #     model_number = driver.find_element(By.XPATH, '//div[@class="model product-data"]')
+        #     pattern = r'(?<=:)[A-Z0-9-]+(?=\b)'  # Regular expression pattern to match the desired string
+        #     model_number_group = re.search(pattern, model_number.text)  # Search for the pattern in the sentence
+        #     self.model_number = model_number_group.group()
         # except Exception as e:
-        #     print("price is not available on the page Price")
-        #     self.successfully_found_element = False
-        #     # print(e)
-        # return self.price
-    def get_capactity_of_item(self,driver):
-        price = ""
+        #     print("Cannot find model number of product")
+        #     self.model_number = "Unknown Model"
+
+
+        # What is the Description/ Capacity/ Model Number of the drive?
         try:
-            # driver.find_element(By.XPATH, '//button[normalize-space()="Add to Cart"]')
+            # Title of product
             title_of_product = driver.find_element(By.XPATH, '//span[@id="productTitle"]')
-            # product_title = soup.find('div', {'class': 'shop-product-title'})
-#            self.capacity = (re.search('\$(\d+,?\d*\.\d+)', what_I_found.text)).group(1)
-            #            self.capacity = (re.search('([0-9]+TB$)\w+', what_I_found.text)).group(1)
-            # self.capacity = (re.search(r'\d+(?=TB)', what_I_found.text)).group(1)
-            # self.capacity = re.findall('([0-9]+)\w+', self.capacity)
-            self.capacity = (re.search(r'\d+TB', title_of_product.text)).group()
+            self.item_description = title_of_product.text
+
+            # Capacity, from the title of the product
+            capacity = (re.search(r'\d+TB', title_of_product.text)).group()  # 12TB
             # strip out the TB from the 12TB so that it's just a string of an integer
-            self.capacity = (re.search(r'\d+', title_of_product.text)).group()
+            self.capacity = (re.search(r'\d+', capacity)).group()  # 12
+
+            #Model Number, from the title of the product
+            pattern = r'\b[A-Z0-9-]{14,}\b'  # Regular expression pattern to match the desired string
+            model_number_group = re.search(pattern, title_of_product.text)  # Search for the pattern in the sentence
+            self.model_number = model_number_group.group()
         except Exception as e:
-            print("Class is not available on the page Price")
-            self.successfully_found_element = False
-            self.capacity = "0TB"
+            print("Cannot find title of product")
+            self.item_description = "Unknown Description"
+            self.capacity = "0"
+            self.model_number = "Unknown Model"
             # print(e)
-
-        pattern = r'\b[A-Z0-9-]{14,}\b'  # Regular expression pattern to match the desired string
-        model_number_group = re.search(pattern, title_of_product.text)  # Search for the pattern in the sentence
-        self.model_number = model_number_group.group()
-        self.item_description = title_of_product.text
-
-        return self.capacity
-
+        return 0
 
 class itemBHPhoto(itemWebsite):
     def __init__(self, driver):
@@ -435,63 +420,66 @@ class itemNewEgg(itemWebsite):
         super().__init__(driver)
         self.website = "NewEgg"
 
-    def check_if_item_in_stock(self,driver):
-        print(driver)
+    def get_item_properties(self, driver):
+        # Check to see if the item is in stock
         try:
-            # page_source.find_element(By.XPATH, '//button[text()="Add to Cart"]')
+            # We'll give it 10 seconds to appear before looking further.
+            # Only doing on the first element as I assume the remaining elements will have loaded by the time this one has
             WebDriverWait(driver, 10).until(
                 EC.presence_of_element_located((By.XPATH, '//button[normalize-space()="Add to cart"]')))
             driver.find_element(By.XPATH, '//button[normalize-space()="Add to cart"]')
             self.in_stock = True
         except Exception as e:
-            print("Class is not available on the page")
-            print("Item is for NOT sale currently")
-            self.successfully_found_element = False
+            print("No Add button. Item is for NOT sale currently")
+            self.in_stock = False
             # print(e)
 
-        return self.in_stock
-    def get_price_of_item(self,driver):
+        # Next, get the price of the item
+        # For Amazon, the price can be in a few different spots, so  allowing it to check with multiple Try: statements
         try:
-            #
-            # '//button[normalize-space()="Add to Cart"]')
-            WebDriverWait(driver, 10).until(
-                EC.presence_of_element_located((By.XPATH, '//li[@class="price-current"]')))
-            what_I_found = driver.find_element(By.XPATH, '//li[@class="price-current"]')
-            print("what_I_found")
-            print(what_I_found.text)
-            self.price = (re.search('\$(\d+,?\d*\.\d+)', what_I_found.text)).group(1)
+            price_element = driver.find_element(By.XPATH, '//li[@class="price-current"]')
+            price = price_element.text
+            # whole_number, decimal_number = what_I_found.text.split('\n')
+            # price = whole_number + "." + decimal_number  # $538.86 (an example output)
+            # print(price)
         except Exception as e:
-            print("Class is not available on the page Price")
-            self.successfully_found_element = False
+            print("price is not available on the page Price")
+            price = "$0.00"  # Set a default price
             # print(e)
+        self.price = (re.search('\$(\d+,?\d*\.\d+)', price)).group(1)
 
-        return self.price
+        # # What is the model number of the drive?
+        # try:
+        #     model_number = driver.find_element(By.XPATH, '//div[@class="model product-data"]')
+        #     pattern = r'(?<=:)[A-Z0-9-]+(?=\b)'  # Regular expression pattern to match the desired string
+        #     model_number_group = re.search(pattern, model_number.text)  # Search for the pattern in the sentence
+        #     self.model_number = model_number_group.group()
+        # except Exception as e:
+        #     print("Cannot find model number of product")
+        #     self.model_number = "Unknown Model"
 
-    def get_capactity_of_item(self, driver):
-        price = ""
+        # What is the Description/ Capacity/ Model Number of the drive?
         try:
+            # Title of product
             title_of_product = driver.find_element(By.XPATH, '//h1[@class="product-title"]')
-            self.capacity = (re.search(r'\d+TB', title_of_product.text)).group()
+            self.item_description = title_of_product.text
+
+            # Capacity, from the title of the product
+            capacity = (re.search(r'\d+TB', title_of_product.text)).group()  # 12TB
+            # strip out the TB from the 12TB so that it's just a string of an integer
+            self.capacity = (re.search(r'\d+', capacity)).group()  # 12
+
+            # Model Number, from the title of the product
+            pattern = r'\b[A-Z0-9-]{14,}\b'  # Regular expression pattern to match the desired string
+            model_number_group = re.search(pattern, title_of_product.text)  # Search for the pattern in the sentence
+            self.model_number = model_number_group.group()
         except Exception as e:
-            print("Class is not available on the page Price")
-            self.successfully_found_element = False
-            self.capacity = "0TB"
+            print("Cannot find title of product")
+            self.item_description = "Unknown Description"
+            self.capacity = "0"
+            self.model_number = "Unknown Model"
             # print(e)
-
-        # strip out the TB from the 12TB so that it's just a string of an integer
-        self.capacity = (re.search(r'\d+', title_of_product.text)).group()
-
-
-        capacity = (re.search(r'\d+TB', title_of_product.text)).group() #12TB
-        # strip out the TB from the 12TB so that it's just a string of an integer
-        self.capacity = (re.search(r'\d+', capacity)).group() #12
-
-        pattern = r'\b[A-Z0-9-]{14,}\b'  # Regular expression pattern to match the desired string
-        model_number_group = re.search(pattern, title_of_product.text)  # Search for the pattern in the sentence
-        self.model_number = model_number_group.group()
-        self.item_description = title_of_product.text
-
-        return self.capacity
+        return 0
 
 class itemWalmart:
     def __init__(self, driver):
@@ -509,52 +497,61 @@ class itemWalmart:
         action.release(element)
         return 0
 
-    def check_if_item_in_stock(self,driver):
 
-        print(driver)
+
+    def get_item_properties(self, driver):
+        # Check to see if the item is in stock
         try:
-            # page_source.find_element(By.XPATH, '//button[text()="Add to cart"]')
+            # We'll give it 10 seconds to appear before looking further.
+            # Only doing on the first element as I assume the remaining elements will have loaded by the time this one has
             WebDriverWait(driver, 10).until(
                 EC.presence_of_element_located((By.XPATH, '//button[normalize-space()="Add to cart"]')))
             driver.find_element(By.XPATH, '//button[normalize-space()="Add to cart"]')
-            #https://www.geeksforgeeks.org/python-selenium-find-button-by-text/
-            #Note: It is recommended to use normalize-space() method because it trim the left and right side spaces. It is possible that there can be spaces present at the start or at the end of the target text.
-
-            print("reached here")
             self.in_stock = True
         except Exception as e:
-            print("Class is not available on the page")
-            print("Item is for NOT sale currently")
-            self.successfully_found_element = False
+            print("No Add button. Item is for NOT sale currently")
+            self.in_stock = False
             # print(e)
 
-        return self.in_stock
-
-    def get_price_of_item(self,driver):
-
+        # Next, get the price of the item
+        # For Amazon, the price can be in a few different spots, so  allowing it to check with multiple Try: statements
         try:
-            what_I_found = driver.find_element(By.XPATH, '//span[@itemprop="price"]')
-            self.price = (re.search('\$(\d+,?\d*\.\d+)', what_I_found.text)).group(1)
-
+            price = driver.find_element(By.XPATH, '//span[@itemprop="price"]')
         except Exception as e:
-            print("Class is not available on the page Price")
-            self.successfully_found_element = False
+            print("price is not available on the page Price")
+            price = "$0.00"  # Set a default price
             # print(e)
+        self.price = (re.search('\$(\d+,?\d*\.\d+)', price)).group(1)
 
-        return self.price
+        # # What is the model number of the drive?
+        # try:
+        #     model_number = driver.find_element(By.XPATH, '//div[@class="model product-data"]')
+        #     pattern = r'(?<=:)[A-Z0-9-]+(?=\b)'  # Regular expression pattern to match the desired string
+        #     model_number_group = re.search(pattern, model_number.text)  # Search for the pattern in the sentence
+        #     self.model_number = model_number_group.group()
+        # except Exception as e:
+        #     print("Cannot find model number of product")
+        #     self.model_number = "Unknown Model"
 
-    def get_capactity_of_item(self, driver):
-        price = ""
+        # What is the Description/ Capacity/ Model Number of the drive?
         try:
-            what_I_found = driver.find_element(By.XPATH, '//h1[@class="b lh-copy dark-gray mt1 mb2 f6 f3-m"]')
-            self.capacity = (re.search(r'\d+TB', what_I_found.text)).group()
+            # Title of product
+            title_of_product = driver.find_element(By.XPATH, '//h1[@class="b lh-copy dark-gray mt1 mb2 f6 f3-m mh0-l mh3"]')
+            self.item_description = title_of_product.text
+
+            # Capacity, from the title of the product
+            capacity = (re.search(r'\d+TB', title_of_product.text)).group()  # 12TB
+            # strip out the TB from the 12TB so that it's just a string of an integer
+            self.capacity = (re.search(r'\d+', capacity)).group()  # 12
+
+            # Model Number, from the title of the product
+            pattern = r'\b[A-Z0-9-]{14,}\b'  # Regular expression pattern to match the desired string
+            model_number_group = re.search(pattern, title_of_product.text)  # Search for the pattern in the sentence
+            self.model_number = model_number_group.group()
         except Exception as e:
-            print("Class is not available on the page Price")
-            self.successfully_found_element = False
-            self.capacity = "0TB"
+            print("Cannot find title of product")
+            self.item_description = "Unknown Description"
+            self.capacity = "0"
+            self.model_number = "Unknown Model"
             # print(e)
-
-        # strip out the TB from the 12TB so that it's just a string of an integer
-        self.capacity = (re.search(r'\d+', what_I_found.text)).group()
-
-        return self.capacity
+        return 0

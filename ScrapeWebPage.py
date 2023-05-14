@@ -881,8 +881,8 @@ def open_the_driver():
     # driver = uc.Chrome(options=options)
 
 
-#   driver = webdriver.Chrome(options=options)
-    driver = uc.Chrome(options=options)
+    driver = webdriver.Chrome(options=options)
+#    driver = uc.Chrome(options=options)
 
     return driver
 

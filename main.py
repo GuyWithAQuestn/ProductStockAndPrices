@@ -13,9 +13,15 @@ import inspect #for looking at attributes of obect/ class
 
 from datetime import datetime #getting today's date
 
+# webdriver_auto_update.py For keeping chromedriver up to date *specifically for Raspberry Pi in order to get UC to work
+from webdriver_auto_update import check_driver
+
 #Detect if we're running on a Pi or something else
 if (DetectPlatform.is_raspberrypi()):
     print("returned True. This is a Pi")
+    ## Make sure to pass in the folder used for storing and  downloading chromedriver executable
+    check_driver('/usr/bin/')
+#    check_driver('/usr/bin/chromedriver')
 else:
     print("retruned False. This is not a Pi.")
 

@@ -6,6 +6,8 @@ from ScrapeWebPage import itemBHPhoto
 from ScrapeWebPage import itemNewEgg
 from ScrapeWebPage import itemWalmart
 
+import os
+
 def create_hdd_database():
 
     conn = sqlite3.connect('products.db.sqlite3')
@@ -68,7 +70,12 @@ def create_hdd_database():
 # conn.close()
 
 def insert_into_HDD_database(date, itemWebsite):
-    conn = sqlite3.connect('products.db.sqlite3')
+    # to help with the problem of not processing from files from the same directories when executing a script
+    here = os.path.dirname(os.path.abspath(__file__))
+    filename = os.path.join(here, 'products.db.sqlite3')
+
+#    conn = sqlite3.connect('products.db.sqlite3')
+    conn = sqlite3.connect(filename)
 
     c = conn.cursor()
 

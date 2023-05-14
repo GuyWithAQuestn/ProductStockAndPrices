@@ -1,6 +1,14 @@
+import os
+
 def open_and_read_file():
+
+    # Often times the script is not executed from where the file's actually exist, and therefore can't find the files, even if
+    # they seem to be in the same directory. Therefore, use the absolute path
+    here = os.path.dirname(os.path.abspath(__file__))
+    filename = os.path.join(here, 'ScrapeParameters.txt')
+
     # Going to bypass the inputs, and get inputs from the file instead
-    FileParametersReadIn = open("ScrapeParameters.txt", "r")
+    FileParametersReadIn = open(filename, "r")
     collected_data_as_string = FileParametersReadIn.readlines()
     FileParametersReadIn.close()
     print("Here's what I read in: ", collected_data_as_string)

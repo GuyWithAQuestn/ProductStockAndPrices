@@ -1,3 +1,5 @@
+import os
+
 from datetime import date
 import csv #imported csvkit
 
@@ -21,10 +23,18 @@ def read_in_and_write_out_csv_file(list_of_prices):
     x = 0
     comment = ""
 
+    # Often times the script is not executed from where the file's actually exist, and therefore can't find the files, even if
+    # they seem to be in the same directory. Therefore, use the absolute path
+    here = os.path.dirname(os.path.abspath(__file__))
+    filename = os.path.join(here, 'wd.csv')
+    tempfilename = os.path.join(here, 'TEMP.csv')
+
     #originalCSVFile = r'/Users/bryan/Downloads/wd.csv'
-    originalCSVFile = r'wd.csv'
+#    originalCSVFile = r'wd.csv'
+    originalCSVFile = filename
     # Write the contents of HDDList to a temporary .CSV file
-    tempCSVFile = r'TEMP.csv'
+#    tempCSVFile = r'TEMP.csv'
+    tempCSVFile = tempfilename
     # tempCSVFile = "TEMP.csv"
 
     # To write read the CSV file

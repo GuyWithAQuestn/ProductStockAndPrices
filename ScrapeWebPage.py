@@ -899,10 +899,10 @@ def open_the_driver():
     #    check_driver('/usr/bin/chromedriver')
 
     #use the existing chromedriver instead of downloading
-    driver = uc.Chrome(
-        driver_executable_path="/home/pi/undetected_chromedriver/chromedriver_copy"
-    )
-    driver.get('https://nowsecure.nl')
+        driver = uc.Chrome(
+            driver_executable_path="/home/pi/undetected_chromedriver/chromedriver_copy"
+        )
+        driver.get('https://nowsecure.nl')
 
     else:
         print("retruned False. This is not a Pi.")

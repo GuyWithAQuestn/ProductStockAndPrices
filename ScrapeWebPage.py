@@ -882,14 +882,32 @@ def open_the_driver():
 
 # Using regular chrome driver
 
-    options.add_argument("--no-sandbox")
-    options.add_argument("--headless") #do it without opening a web browser
-    options.add_argument("--disable-gpu")
-
-    driver = webdriver.Chrome(options=options)
+    # options.add_argument("--no-sandbox")
+    # options.add_argument("--headless") #do it without opening a web browser
+    # options.add_argument("--disable-gpu")
+    #
+    # driver = webdriver.Chrome(options=options)
 
 # Using undetected_chromedriver
-#    driver = uc.Chrome(options=options)
+    driver = uc.Chrome(options=options)
+
+    # Detect if we're running on a Pi or something else
+    if (DetectPlatform.is_raspberrypi()):
+        print("returned True. This is a Pi")
+        ## Make sure to pass in the folder used for storing and  downloading chromedriver executable
+        # check_driver('/usr/bin/') #wrong driver!
+    #    check_driver('/usr/bin/chromedriver')
+
+    #use the existing chromedriver instead of downloading
+    driver = uc.Chrome(
+        driver_executable_path="/home/pi/undetected_chromedriver/chromedriver_copy"
+    )
+    driver.get('https://nowsecure.nl')
+
+    else:
+        print("retruned False. This is not a Pi.")
+
+
 
     return driver
 

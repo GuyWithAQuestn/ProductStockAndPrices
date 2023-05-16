@@ -900,7 +900,7 @@ def open_the_driver():
 
     #use the existing chromedriver instead of downloading
         driver = uc.Chrome(
-            driver_executable_path="/home/pi/undetected_chromedriver/chromedriver_copy"
+            driver_executable_path="/home/pi/.local/share/undetected_chromedriver/chromedriver_copy"
         )
         driver.get('https://nowsecure.nl')
 

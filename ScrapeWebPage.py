@@ -9,6 +9,8 @@ from selenium.webdriver.common.by import By
 #import undetected_chromedriver as By
 import undetected_chromedriver as uc
 
+import DetectPlatform
+
 from selenium.common.exceptions import TimeoutException #for urls timing out
 
 from selenium.webdriver.support.ui import WebDriverWait
@@ -899,10 +901,10 @@ def open_the_driver():
     #    check_driver('/usr/bin/chromedriver')
 
     #use the existing chromedriver instead of downloading
-        driver = uc.Chrome(
-            driver_executable_path="/home/pi/.local/share/undetected_chromedriver/chromedriver_copy"
-        )
-        driver.get('https://nowsecure.nl')
+        # driver = uc.Chrome(
+        #     driver_executable_path="/home/pi/.local/share/undetected_chromedriver/chromedriver_copy"
+        # )
+        # driver.get('https://nowsecure.nl')
 
     else:
         print("retruned False. This is not a Pi.")

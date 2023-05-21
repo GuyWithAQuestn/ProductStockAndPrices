@@ -166,15 +166,7 @@ def open_the_driver():
     # driver = uc.Chrome(options=options)
 
 
-# Using regular chrome driver
 
-    options.add_argument("--no-sandbox")
-    options.add_argument("--headless") #do it without opening a web browser
-    options.add_argument("--disable-gpu")
-
-
-    # use chome driver
-    driver = webdriver.Chrome(options=options)
 
     # Using undetected_chromedriver
 #    driver = uc.Chrome(options=options)
@@ -190,9 +182,18 @@ def open_the_driver():
         # )
         # driver.get('https://nowsecure.nl')
 
+        # Don't open browser on Raspberry Pi
+        # options.add_argument("--no-sandbox")
+        options.add_argument("--headless")  # do it without opening a web browser
+        # options.add_argument("--disable-gpu")
+
+
     else:
         print("returned False. This is not a Pi.")
 
+
+    # use chome driver
+    driver = webdriver.Chrome(options=options)
 
 
     return driver

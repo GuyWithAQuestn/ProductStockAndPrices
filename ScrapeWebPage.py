@@ -29,6 +29,22 @@ from itemWebsite import itemBHPhoto
 from itemWebsite import itemNewEgg
 from itemWebsite import itemWalmart
 
+
+def is_raspberrypi():
+    try:
+        with io.open('/sys/firmware/devicetree/base/model', 'r') as m:
+            if 'raspberry pi' in m.read().lower():
+                return True
+    except Exception:
+        pass
+        return False
+
+
+from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.common.by import By
+
+#driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()))
+
 def get_list_of_in_stock_items(newly_added_items):
 
     # print("newly_added_items")
@@ -165,15 +181,13 @@ def open_the_driver():
     # options.add_argument('--proxy-server=proxy')
     # driver = uc.Chrome(options=options)
 
-
-
-
     # Using undetected_chromedriver
 #    driver = uc.Chrome(options=options)
 
     # Detect if we're running on a Pi or something else
     if (DetectPlatform.is_raspberrypi()):
         print("returned True. This is a Pi")
+        driver = uc.Chrome(driver_executable_path="/home/pi/.local/share/undetected_chromedriver/chromedriver_copy")
         ## Make sure to pass in the folder used for storing and  downloading chromedriver executable
 
         #use the existing chromedriver instead of downloading
@@ -184,16 +198,22 @@ def open_the_driver():
 
         # Don't open browser on Raspberry Pi
         # options.add_argument("--no-sandbox")
-        options.add_argument("--headless")  # do it without opening a web browser
+        # options.add_argument("--headless")  # do it without opening a web browser
         # options.add_argument("--disable-gpu")
 
 
     else:
         print("returned False. This is not a Pi.")
+        driver = uc.Chrome()
 
+
+    # Don't open browser on Raspberry Pi
+#    options.add_argument("--no-sandbox")
+#    options.add_argument("--headless")  # do it without opening a web browser
+#    options.add_argument("--disable-gpu")
 
     # use chome driver
-    driver = webdriver.Chrome(options=options)
+#    driver = webdriver.Chrome(options=options)
 
 
     return driver

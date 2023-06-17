@@ -1,5 +1,4 @@
 #!/usr/bin/python3
-
 import ScrapeWebPage
 import ReadInParametersFile
 import ReadWriteDataToCSV

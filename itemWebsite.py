@@ -98,7 +98,7 @@ class itemBestBuy(itemWebsite):
             # Only doing on the first element as I assume the remaining elements will have loaded by the time this one has
             WebDriverWait(driver, 10).until(
                 EC.presence_of_element_located((By.XPATH, '//button[normalize-space()="Add to Cart"]')))
-            driver.find_element(By.XPATH, '//button[normalize-space()="Add to Cart"]')
+            # driver.find_element(By.XPATH, '//button[normalize-space()="Add to Cart"]')
             self.in_stock = True
         except Exception as e:
             print("No Add button. Item is for NOT sale currently")

@@ -209,9 +209,9 @@ def open_the_driver():
 
 
     # Don't open browser on Raspberry Pi
-#    options.add_argument("--no-sandbox")
-#    options.add_argument("--headless")  # do it without opening a web browser
-#    options.add_argument("--disable-gpu")
+    options.add_argument("--no-sandbox")
+    options.add_argument("--headless")  # do it without opening a web browser
+    options.add_argument("--disable-gpu")
 
     # use chome driver
 #    driver = webdriver.Chrome(options=options)

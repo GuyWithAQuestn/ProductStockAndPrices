@@ -128,6 +128,7 @@ def scrape_web_page_for_text(url):
     return page_content
 
 def scrape_web_page_for_source_code(driver, url):
+
     driver.get(url)
 
     # # Get the page content

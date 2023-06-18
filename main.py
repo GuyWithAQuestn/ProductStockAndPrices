@@ -11,6 +11,7 @@ from random import randint
 import inspect #for looking at attributes of obect/ class
 
 from datetime import datetime #getting today's date
+from selenium.common.exceptions import TimeoutException
 
 # webdriver_auto_update.py For keeping chromedriver up to date *specifically for Raspberry Pi in order to get UC to work
 # from webdriver_auto_update import check_driver
@@ -29,10 +30,23 @@ driver = ScrapeWebPage.open_the_driver()
 
 # For each of the urls read in, get the hard drive's details and put it in a HDD object instance.
 list_of_hard_drive_items = []
+
+# List to store the URLs that need to be retried
+urls_to_retry = []
+
 for each_url in list_of_urls:
-    hard_drive_item, page_content_soup = ScrapeWebPage.scrape_web_page_for_source_code(driver, each_url)
-    list_of_hard_drive_items.append(hard_drive_item)
-    time.sleep(randint(2, 7)) # randomize a 2 to 7 second pause between websites (again, seem like less of a bot)
+
+    try:
+        hard_drive_item, page_content_soup = ScrapeWebPage.scrape_web_page_for_source_code(driver, each_url)
+        list_of_hard_drive_items.append(hard_drive_item)
+        time.sleep(randint(2, 7)) # randomize a 2 to 7 second pause between websites (again, seem like less of a bot)
+
+    except TimeoutException:
+        urls_to_retry.append(url)  # Add the URL to the retry list
+
+print("URLs that timed out (if any): ")
+print(urls_to_retry)
+
 
 # this should be one long list initially sorted by website name and then by capacity
 list_of_HDDs_sorted_by_Website_then_Capacity = ReadWriteDataToCSV.sortListOfDevicesForOutput(list_of_hard_drive_items)
